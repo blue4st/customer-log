@@ -35,7 +35,7 @@
   <h1>Welcome</h1>
   <div class="card">
     <input id="name" placeholder="Enter name" />
-    <input id="phone" placeholder="Enter WhatsApp number" maxlength="10" inputmode="numeric" />
+    <input id="phone" placeholder="Enter WhatsApp number" inputmode="numeric" />
     <button onclick="addCustomer()">Submit</button>
     <div id="confirmation" class="confirmation">✅ Thank you for providing your details! We’ll stay connected.</div>
   </div>  
@@ -49,7 +49,10 @@
 
     async function addCustomer() {
       const name = document.getElementById("name").value.trim();
-      const phone = document.getElementById("phone").value.trim();
+      let phone = document.getElementById("phone").value;
+
+      // allow spaces while typing, but remove them before validation/saving
+      phone = phone.replace(/\s+/g, "");
 
       if (!name || !phone) return alert("Please fill both fields");
       if (!/^[0-9]{10}$/.test(phone)) return alert("Please enter a valid 10-digit WhatsApp number");
