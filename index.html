@@ -1,34 +1,30 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html>
 <head>
   <meta charset="UTF-8">
   <title>Customer Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: sans-serif; background:#f9fafb; padding:20px; }
-    h1 { text-align:center; }
+    body { font-family: sans-serif; background:#f9fafb; padding:20px; text-align:center; }
     .card { max-width:400px; margin:auto; padding:20px; background:white; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
     input, button { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #ccc; }
     button { background:#2563eb; color:white; font-weight:bold; border:none; cursor:pointer; }
-    ul { list-style:none; padding:0; }
-    li { background:#fff; padding:10px; margin:5px 0; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.05); display:flex; justify-content:space-between; }
+    .logo { max-width:120px; margin:20px auto; }
+    .confirmation { color:green; font-weight:bold; margin-top:15px; display:none; }
   </style>
 </head>
 <body>
-  <h1>Customer Log</h1>
+  <img src="https://znyppldiqkaraokwjnid.supabase.co/storage/v1/object/public/assets/logo%20-%20Horizontal.png" alt="Company Logo" class="logo" />
+  <h1>Welcome</h1>
   <div class="card">
     <input id="name" placeholder="Enter name" />
     <input id="phone" placeholder="Enter phone number" />
-    <button onclick="addCustomer()">Add Customer</button>
-  </div>
-  <h2 style="text-align:center; margin-top:20px;">Customer List</h2>
-  <ul id="list"></ul>
-
-  <script type="module">
+    <button onclick="addCustomer()">Submit</button>
+    <div id="confirmation" class="confirmation">✅ Thank you! Your details have been recorded.</div>
+  </div>  <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
-    const SUPABASE_URL = "https://znyppldiqkaraokwjnid.supabase.co";  // 👈 paste here
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpueXBwbGRpcWthcmFva3dqbmlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzODEyMjMsImV4cCI6MjA3MTk1NzIyM30.whufpvq9nMTfgpmMWXxbF70q8creuDsJQqRQoF0n66U"; // 👈 paste here
+    const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co"; // replace with your URL
+    const SUPABASE_KEY = "YOUR_ANON_KEY"; // replace with your anon key
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function addCustomer() {
@@ -36,30 +32,16 @@
       const phone = document.getElementById("phone").value.trim();
       if (!name || !phone) return alert("Please fill both fields");
 
-      const { data, error } = await supabase.from("customers").insert([{ name, phone }]).select();
+      const { error } = await supabase.from("customers").insert([{ name, phone }]);
       if (error) return alert("Error: " + error.message);
 
-      renderList([data[0]]);
       document.getElementById("name").value = "";
       document.getElementById("phone").value = "";
+      const conf = document.getElementById("confirmation");
+      conf.style.display = "block";
+      setTimeout(() => { conf.style.display = "none"; }, 3000);
     }
 
-    async function loadCustomers() {
-      const { data } = await supabase.from("customers").select("*").order("created_at", { ascending: false }).limit(10);
-      if (data) renderList(data);
-    }
-
-    function renderList(customers) {
-      const list = document.getElementById("list");
-      customers.forEach(c => {
-        const li = document.createElement("li");
-        li.innerHTML = `<span>${c.name}</span><span>${c.phone}</span>`;
-        list.prepend(li);
-      });
-    }
-
-    loadCustomers();
     window.addCustomer = addCustomer;
-  </script>
-</body>
+  </script></body>
 </html>
