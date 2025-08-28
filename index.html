@@ -7,58 +7,37 @@
   <style>
     body { font-family: sans-serif; background:#f9fafb; padding:20px; text-align:center; }
     .card { max-width:400px; margin:auto; padding:20px; background:white; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
-    input, button { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #ccc; font-size:16px; }
+    input, button { width:100%; padding:12px; margin:10px 0; border-radius:8px; border:1px solid #ccc; font-size:16px; }
     input:focus { outline:none; border-color:#2563eb; box-shadow:0 0 6px rgba(37,99,235,0.4); }
-    button { background:#2563eb; color:white; font-weight:bold; border:none; cursor:pointer; transition:transform 0.15s ease; }
-    button:active { transform:scale(0.96); }
+    button { background:#2563eb; color:white; font-weight:bold; border:none; cursor:pointer; transition: transform 0.1s; }
+    button:active { transform: scale(0.96); }
     #logo-container { text-align:center; margin:20px 0; }
     #site-logo { max-height:80px; width:auto; }
     .confirmation { 
-      opacity:0;
+      background:#ecfdf5; 
+      color:#065f46; 
+      font-weight:600; 
       margin-top:15px; 
       padding:12px; 
       border-radius:8px; 
-      background:#ecfdf5; 
-      color:#065f46; 
-      font-weight:500; 
-      font-size:15px; 
-      transition: opacity 0.6s ease; 
+      display:none; 
+      opacity:0; 
+      transition: opacity 0.6s ease;
     }
-    .confirmation.show { opacity:1; }
-    .checkmark {
-      display:inline-block;
-      width:20px;
-      height:20px;
-      border-radius:50%;
-      border:2px solid #10b981;
-      position:relative;
-      margin-right:8px;
-      vertical-align:middle;
-    }
-    .checkmark::after {
-      content:"";
-      position:absolute;
-      left:4px; top:0px;
-      width:6px; height:12px;
-      border:solid #10b981;
-      border-width:0 2px 2px 0;
-      transform:rotate(45deg);
-    }
+    .confirmation.show { display:block; opacity:1; }
   </style>
 </head>
 <body>
   <div id="logo-container">
     <img src="https://znyppldiqkaraokwjnid.supabase.co/storage/v1/object/public/assets/logo%20-%20Horizontal.png" alt="Company Logo" id="site-logo" />
   </div>
+
   <h1>Welcome</h1>
   <div class="card">
     <input id="name" placeholder="Enter name" />
-    <input id="phone" placeholder="Enter phone number" />
+    <input id="phone" placeholder="Enter WhatsApp number" maxlength="10" inputmode="numeric" />
     <button onclick="addCustomer()">Submit</button>
-    <div id="confirmation" class="confirmation">
-      <span class="checkmark"></span>
-      Thank you for providing your details! We’ve recorded them successfully.
-    </div>
+    <div id="confirmation" class="confirmation">✅ Thank you for providing your details! We’ll stay connected.</div>
   </div>  
 
   <script type="module">
@@ -71,7 +50,9 @@
     async function addCustomer() {
       const name = document.getElementById("name").value.trim();
       const phone = document.getElementById("phone").value.trim();
+
       if (!name || !phone) return alert("Please fill both fields");
+      if (!/^[0-9]{10}$/.test(phone)) return alert("Please enter a valid 10-digit WhatsApp number");
 
       const { error } = await supabase.from("customers").insert([{ name, phone }]);
       if (error) return alert("Error: " + error.message);
