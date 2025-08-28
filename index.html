@@ -1,15 +1,26 @@
-<!DOCTYPE html><html>
-<head>
+<!DOCTYPE html><html><head>
   <meta charset="UTF-8">
   <title>Customer Log</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     body { font-family: sans-serif; background:#f9fafb; padding:20px; text-align:center; }
     .card { max-width:400px; margin:auto; padding:20px; background:white; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.1); }
-    input, button { width:100%; padding:10px; margin:8px 0; border-radius:8px; border:1px solid #ccc; }
-    button { background:#2563eb; color:white; font-weight:bold; border:none; cursor:pointer; }
+    input, button { width:100%; padding:12px; margin:10px 0; border-radius:10px; border:1px solid #ccc; font-size:16px; }
+    input:focus { outline:none; border-color:#2563eb; box-shadow:0 0 0 3px rgba(37,99,235,0.2); }
+    button { background:#2563eb; color:white; font-weight:bold; border:none; cursor:pointer; transition: transform 0.1s ease, background 0.2s ease; font-size:16px; }
+    button:hover { background:#1e4ed8; }
+    button:active { transform: scale(0.96); }
     .logo { max-width:120px; margin:20px auto; }
-    .confirmation { color:green; font-weight:bold; margin-top:15px; display:none; }
+    .confirmation { 
+      color:#065f46; font-weight:bold; margin-top:15px; display:none; 
+      padding:12px; background:#ecfdf5; border:1px solid #6ee7b7; border-radius:10px; 
+      position:fixed; bottom:20px; left:50%; transform:translateX(-50%);
+      box-shadow:0 4px 10px rgba(0,0,0,0.15);
+      opacity:0; transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .confirmation.show { display:block; opacity:1; transform:translateX(-50%) translateY(0); }
+    .tick { display:inline-block; margin-right:8px; color:#10b981; font-size:18px; transform:scale(0); animation: pop 0.3s forwards; }
+    @keyframes pop { to { transform:scale(1); } }
   </style>
 </head>
 <body>
@@ -19,12 +30,12 @@
     <input id="name" placeholder="Enter name" />
     <input id="phone" placeholder="Enter phone number" />
     <button onclick="addCustomer()">Submit</button>
-    <div id="confirmation" class="confirmation">✅ Thank you! Your details have been recorded.</div>
+    <div id="confirmation" class="confirmation"><span class="tick">✔</span>Thank you for sharing your details with us! We appreciate your interest and will be in touch soon.</div>
   </div>  <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js";
 
-    const SUPABASE_URL = "https://znyppldiqkaraokwjnid.supabase.co"; // replace with your URL
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpueXBwbGRpcWthcmFva3dqbmlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzODEyMjMsImV4cCI6MjA3MTk1NzIyM30.whufpvq9nMTfgpmMWXxbF70q8creuDsJQqRQoF0n66U"; // replace with your anon key
+    const SUPABASE_URL = "https://znyppldiqkaraokwjnid.supabase.co"; 
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpueXBwbGRpcWthcmFva3dqbmlkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYzODEyMjMsImV4cCI6MjA3MTk1NzIyM30.whufpvq9nMTfgpmMWXxbF70q8creuDsJQqRQoF0n66U"; 
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function addCustomer() {
@@ -37,9 +48,11 @@
 
       document.getElementById("name").value = "";
       document.getElementById("phone").value = "";
+
       const conf = document.getElementById("confirmation");
-      conf.style.display = "block";
-      setTimeout(() => { conf.style.display = "none"; }, 3000);
+      conf.classList.add("show");
+      
+      setTimeout(() => { conf.classList.remove("show"); }, 4000);
     }
 
     window.addCustomer = addCustomer;
